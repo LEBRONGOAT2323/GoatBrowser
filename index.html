@@ -1,55 +1,124 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>My Browser</title>
+  <title>Harrison Browser</title>
   <style>
     body {
       margin: 0;
       font-family: Arial;
-      background: #1e1e1e;
+      background: #1a1a1a;
       color: white;
     }
 
-    .topbar {
+    .navbar {
       display: flex;
+      gap: 8px;
       padding: 10px;
       background: #2a2a2a;
-      gap: 10px;
+      align-items: center;
+    }
+
+    button {
+      padding: 6px 12px;
+      background: #00c3ff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
     }
 
     input {
       flex: 1;
-      padding: 8px;
-      border-radius: 6px;
+      padding: 6px;
+      border-radius: 5px;
       border: none;
       background: #111;
       color: white;
     }
 
-    button {
-      padding: 8px 15px;
-      border-radius: 6px;
-      border: none;
-      background: #00c3ff;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    webview {
+    iframe {
       width: 100%;
       height: calc(100vh - 50px);
+      border: none;
+      background: white;
+    }
+
+    .loading {
+      height: 3px;
+      background: #00c3ff;
+      width: 0%;
+      transition: width 0.3s;
     }
   </style>
 </head>
 <body>
 
-  <div class="topbar">
-    <input id="url" placeholder="Enter URL (https://example.com)">
+  <div class="loading" id="loadingBar"></div>
+
+  <div class="navbar">
+    <button onclick="back()">◀</button>
+    <button onclick="forward()">▶</button>
+    <button onclick="refresh()">⟳</button>
+    <input id="url" placeholder="Enter URL (example.com)">
     <button onclick="go()">Go</button>
   </div>
 
-  <webview id="browser" src="https://example.com"></webview>
+  <iframe id="browser"></iframe>
 
-  <script src="renderer.js"></script>
+  <script>
+    const iframe = document.getElementById("browser");
+    const loadingBar = document.getElementById("loadingBar");
+    let historyStack = [];
+    let historyIndex = -1;
+
+    function normalize(url) {
+      if (!url.startsWith("http")) {
+        return "https://" + url;
+      }
+      return url;
+    }
+
+    function go() {
+      let url = normalize(document.getElementById("url").value);
+      loadURL(url);
+    }
+
+    function loadURL(url) {
+      loadingBar.style.width = "30%";
+      iframe.src = url;
+
+      historyStack = historyStack.slice(0, historyIndex + 1);
+      historyStack.push(url);
+      historyIndex++;
+
+      loadingBar.style.width = "70%";
+
+      iframe.onload = () => {
+        loadingBar.style.width = "100%";
+        setTimeout(() => {
+          loadingBar.style.width = "0%";
+        }, 300);
+      };
+    }
+
+    function back() {
+      if (historyIndex > 0) {
+        historyIndex--;
+        iframe.src = historyStack[historyIndex];
+      }
+    }
+
+    function forward() {
+      if (historyIndex < historyStack.length - 1) {
+        historyIndex++;
+        iframe.src = historyStack[historyIndex];
+      }
+    }
+
+    function refresh() {
+      iframe.src = historyStack[historyIndex];
+    }
+  </script>
+
 </body>
 </html>
