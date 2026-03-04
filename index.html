@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Browser</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: #1e1e1e;
+      color: white;
+    }
+
+    .topbar {
+      display: flex;
+      padding: 10px;
+      background: #2a2a2a;
+      gap: 10px;
+    }
+
+    input {
+      flex: 1;
+      padding: 8px;
+      border-radius: 6px;
+      border: none;
+      background: #111;
+      color: white;
+    }
+
+    button {
+      padding: 8px 15px;
+      border-radius: 6px;
+      border: none;
+      background: #00c3ff;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    webview {
+      width: 100%;
+      height: calc(100vh - 50px);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <input id="url" placeholder="Enter URL (https://example.com)">
+    <button onclick="go()">Go</button>
+  </div>
+
+  <webview id="browser" src="https://example.com"></webview>
+
+  <script src="renderer.js"></script>
+</body>
+</html>
